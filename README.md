@@ -1,4 +1,4 @@
-# scenicBar
+# scenic-bar
 
 ## util.js 为工具类，可在此类中继续添加功能函数
 
