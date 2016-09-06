@@ -29,21 +29,22 @@ util.getRawData = function(dataPath) {
     return Data;
 }
 
-//读excel表格“建议上线景点”前300条，取出名字
-util.getSuggestName = function(path, start, end) {
+//读excel表格“建议上线景点”，先判断“是否AOI面状数据”是否为1，如果是，取出名字，取前number条
+util.getSuggestName = function(path, number) {
     var list = xlsx.parse(path);
 
     for (var i = 0; i < list.length; i++) {
         if (list[i].name == "建议上线景点") {
             var suggest_name = [];
-
-            if (start < end) {
-                for (var m = start; m < end + 1; m++) {
+            var len = 0;
+            if(!number){
+                number = list[i].data.length;
+            }
+            for (var m = 0; m < list[i].data.length; m++) {
+                if (len < number && list[i].data[m][5] == 1 ){
+                    len++;
                     suggest_name.push(list[i].data[m][1]);
                 }
-            } else {
-                console.log("参数错误！");
-                return;
             }
         }
     }
@@ -111,16 +112,38 @@ util.getBidsName = function(rawData, bids) {
     return bids_name;
 }
 
+//根据excel建议上线景点顺序，顺序输出景点名称映射关系
+util.sortSuggestName = function(path) {
+    var list = xlsx.parse(path);
+    var map = {};
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].name == "建议上线景点") {
+            for (var m = 1; m < list[i].data.length; m++) {
+                map[list[i].data[m][1]] = m;
+            }
+        }
+    }
+    return map;
+}
+
+
 //根据bids去top.txt中查找对应子点类型，并写入js，返回最终可以在原始数据中查找到的全部bids
 //最终得到了全部bid的barinfo_free数据
 util.getBarinfo_free = function(bids, dataPath) {
     var RawData = this.getRawData(dataPath);
     var RawObj = [];
+    var sort_map = this.sortSuggestName("./test.xlsx");
+
     for (var i = 0; i < RawData.length; i++) {
         if (bids.indexOf(RawData[i].parent_bid) != -1) {
+            RawData[i].no = sort_map[RawData[i].parent];
             RawObj.push(RawData[i]);
         }
     }
+
+    RawObj.sort(function(a, b) {
+        return a.no - b.no;
+    });
 
     var EightObj = JSON.parse(fs.readFileSync('./eight.js'));
     var Result = "";

@@ -20,8 +20,18 @@ var barinfo_free = util.getBarInfoFree(results);
 //匹配result.js中对应barinfo_free数据
 var barinfo_fetter = util.getBarInfoFetter(results);
 
-//console.log(barinfo_fetter)
+var results = [];
+for(var i = 0; i < bids.length; i++){
+	var result = [];
+	result[0] = bids[i];
+	result[1] = bids_name[i];
+	result[2] = barinfo_free[i];
+	result[3] = barinfo_fetter[i];
+	results.push(result);
+}
 
-const data = [bids, bids_name, barinfo_free, barinfo_fetter];
+//var data = [bids, bids_name, barinfo_free, barinfo_fetter];
+var data = results;
+
 var buffer = xlsx.build([{name: "result", data: data}]); // Returns a buffer 
 fs.writeFileSync('export.xlsx', buffer, 'binary');
