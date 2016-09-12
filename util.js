@@ -13,7 +13,7 @@ util.getRawData = function(dataPath) {
     var datas = data.split("\n");
 
     var Data = [];
-    for (var i = 0; i < datas.length; i++) {
+    for (var i = 0; i < datas.length && datas; i++) {
         var list = datas[i].split(/\s+/);
 
         for (var m = 0; m < list.length; m++) {
@@ -129,10 +129,10 @@ util.sortSuggestName = function(path) {
 
 //根据bids去top.txt中查找对应子点类型，并写入js，返回最终可以在原始数据中查找到的全部bids
 //最终得到了全部bid的barinfo_free数据
-util.getBarinfo_free = function(bids, dataPath) {
+util.getBarinfo_free = function(bids, dataPath, sortPath) {
     var RawData = this.getRawData(dataPath);
     var RawObj = [];
-    var sort_map = this.sortSuggestName("./test.xlsx");
+    var sort_map = this.sortSuggestName(sortPath);
 
     for (var i = 0; i < RawData.length; i++) {
         if (bids.indexOf(RawData[i].parent_bid) != -1) {
@@ -246,7 +246,7 @@ util.sortType = function(arr) {
 }
 
 
-util.writeRoute = function(bids, callback) {
+util.writeRoute = function(uids, callback) {
     //读取刚刚生成的result.js，only含有barinfo_free，barinfo_fetter为空
     var Final = fs.readFileSync('./result.js', 'utf8');
     var finalItem = Final.split("\n");
@@ -263,17 +263,17 @@ util.writeRoute = function(bids, callback) {
         parms = '{"from":"scenery_function_bar","uid":"__uid__"}',
         luxian_url = "baidumap://map/component?comName=scenery&target=scenery_route_guide_page&needLocation=yes&src_from=scenery_function_bar&param=";
 
-    for (var i = 0; i < bids.length; i++) {
-        arr.push(this.bid2Uid(bids[i]));
-    }
+    // for (var i = 0; i < bids.length; i++) {
+    //     arr.push(this.bid2Uid(bids[i]));
+    // }
 
-    q.allSettled(arr).then(function(result) {
-        result.forEach(function(uid) {
-            uids_arr.push(_.values(uid.value.data).pop());
-        })
-        return uids_arr;
-    }).then(function(result0) {
-        result0.forEach(function(element1) {
+    // q.allSettled(arr).then(function(result) {
+    //     result.forEach(function(uid) {
+    //         uids_arr.push(_.values(uid.value.data).pop());
+    //     })
+    //     return uids_arr;
+    // }).then(function(result0) {
+        uids.forEach(function(element1) {
             routeguide_arr.push(me.routeguide(element1));
         })
 
@@ -306,10 +306,10 @@ util.writeRoute = function(bids, callback) {
 
                 callback(null, null);
             })
-    })
+    // })
 }
 
-util.writeAudio = function(bids, callback) {
+util.writeAudio = function(uids, callback) {
     //读取刚刚生成的result.js，only含有barinfo_fetter
     var Final = fs.readFileSync('./result.js', 'utf8');
     var finalItem = Final.split("\n");
@@ -326,18 +326,18 @@ util.writeAudio = function(bids, callback) {
         parms = '{"from":"scenery_function_bar","uid":"__uid__"}',
         daolan_url = "baidumap://map/component?comName=scenery&target=scenery_voice_guide_page&needLocation=yes&src_from=scenery_function_bar&param=";
 
-    for (var i = 0; i < bids.length; i++) {
-        arr.push(this.bid2Uid(bids[i]));
-    }
+    // for (var i = 0; i < bids.length; i++) {
+    //     arr.push(this.bid2Uid(bids[i]));
+    // }
 
-    q.allSettled(arr).then(function(result) {
-        result.forEach(function(uid) {
-            uids_arr.push(_.values(uid.value.data).pop());
+    // q.allSettled(arr).then(function(result) {
+    //     result.forEach(function(uid) {
+    //         uids_arr.push(_.values(uid.value.data).pop());
 
-        })
-        return uids_arr;
-    }).then(function(result0) {
-        result0.forEach(function(element0) {
+    //     })
+    //     return uids_arr;
+    // }).then(function(result0) {
+        uids.forEach(function(element0) {
             audioguide_arr.push(me.audioguide(element0));
         })
 
@@ -369,13 +369,13 @@ util.writeAudio = function(bids, callback) {
 
                 callback(null, null);
             })
-    })
+    // })
 
 }
 
 
 
-util.writeInter = function(bids, callback) {
+util.writeInter = function(uids, callback) {
     var Final = fs.readFileSync('./result.js', 'utf8');
     var finalItem = Final.split("\n");
 
@@ -392,19 +392,19 @@ util.writeInter = function(bids, callback) {
         parms = 'panotype=inter&from_source=share&pid=__PID__&panoid=__PID__&iid=__IID__',
         quanjing_url = "baidumap://map/component?target=street_scape_page&comName=streetscape&";
 
-    for (var i = 0; i < bids.length; i++) {
-        arr.push(this.bid2Uid(bids[i]));
-    }
+    // for (var i = 0; i < bids.length; i++) {
+    //     arr.push(this.bid2Uid(bids[i]));
+    // }
 
-    q.allSettled(arr).then(function(result) {
-            result.forEach(function(uid) {
-                uids_arr.push(_.values(uid.value.data).pop());
+    // q.allSettled(arr).then(function(result) {
+    //         result.forEach(function(uid) {
+    //             uids_arr.push(_.values(uid.value.data).pop());
 
-            });
-            return uids_arr;
-        })
-        .then(function(res2) {
-            res2.forEach(function(element2) {
+    //         });
+    //         return uids_arr;
+    //     })
+    //     .then(function(res2) {
+            uids.forEach(function(element2) {
                 hasinter_arr.push(me.hasinter(element2));
             })
             q.allSettled(hasinter_arr).then(function(result3) {
@@ -440,7 +440,7 @@ util.writeInter = function(bids, callback) {
 
                     callback(null, null);
                 })
-        })
+        // })
 
 }
 
@@ -449,9 +449,10 @@ util.writeInter = function(bids, callback) {
 util.bid2Uid = function(bid) {
     var defer = q.defer();
     var options = {
-        uri: "http://cp01-changchunbo.epc.baidu.com:8184/tedproduct",
+        uri: "http://st01-orp-app0674.st01.baidu.com:8280/datawarehouse",
         qs: {
-            "qt": "req_bid2uid"
+            "qt": "api_util",
+            "op": "bid2uid"
         },
         method: 'POST',
         form: {
@@ -474,7 +475,7 @@ util.bid2Uid = function(bid) {
 util.audioguide = function(uid) {
     var defer = q.defer();
     var options = {
-        uri: "http://cp01-changchunbo.epc.baidu.com:8183/scope",
+        uri: "http://client.map.baidu.com/scope",
         qs: {
             "qt": "scope_audioguide",
             "uid": uid,
@@ -575,7 +576,6 @@ util.getBarInfoFree = function(results) {
 util.getBarInfoFetter = function(results) {
     var barinfo_fetter = [];
     for (var i = 0; i < results.length; i++) {
-
         //JSON.parse(results[i]);
         barinfo_fetter.push("");
 
@@ -584,11 +584,9 @@ util.getBarInfoFetter = function(results) {
                 barinfo_fetter[i] = barinfo_fetter[i] + results[i].barinfo_fetter[m].name + " ";
             }
         }
-
     }
     return barinfo_fetter;
 }
-
 
 
 module.exports = util;
