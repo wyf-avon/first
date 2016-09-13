@@ -1,6 +1,6 @@
 {
   "name": "scenic-bar",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "## util.js 为工具类，可在此类中继续添加功能函数",
   "main": "main.js",
   "dependencies": {
