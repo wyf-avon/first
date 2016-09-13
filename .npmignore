@@ -38,3 +38,6 @@ logs/
 
 # node_modules ignore
 node_modules/
+
+# data ignore
+data/
