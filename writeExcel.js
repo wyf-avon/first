@@ -3,7 +3,7 @@ var xlsx = require("node-xlsx");
 var util = require('./util');
 
 //获取原始数据TXT文件的所有data
-var rawData = util.getRawData('./data/top.txt');
+var rawData = util.getRawData('./data/data.txt');
 
 var Bid = fs.readFileSync('./data/bids.js', 'utf8');
 var bids = Bid.split(",");

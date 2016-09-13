@@ -7,7 +7,7 @@ var _ = require('underscore');
 var util = {};
 
 
-//读取top.txt文本存储所有的原始数据，并按照格式存储到Data数组
+//读取文本存储所有的原始数据，并按照格式存储到Data数组
 util.getRawData = function(dataPath) {
     var data = fs.readFileSync(dataPath, 'utf-8');
     var datas = data.split("\n");
@@ -20,9 +20,7 @@ util.getRawData = function(dataPath) {
             Data.push({
                 'parent': list[0],
                 'parent_bid': list[1],
-                'sub_type': list[2],
-                'sub': list[3],
-                'sub_bid': list[4]
+                'sub_type': list[2]
             })
         }
     }
@@ -245,8 +243,9 @@ util.sortType = function(arr) {
     return arr;
 }
 
+// util.bid2uidMap = function
 
-util.writeRoute = function(uids, callback) {
+util.writeRoute = function(bids, callback) {
     //读取刚刚生成的result.js，only含有barinfo_free，barinfo_fetter为空
     var Final = fs.readFileSync('./data/result.js', 'utf8');
     var finalItem = Final.split("\n");
@@ -263,17 +262,17 @@ util.writeRoute = function(uids, callback) {
         parms = '{"from":"scenery_function_bar","uid":"__uid__"}',
         luxian_url = "baidumap://map/component?comName=scenery&target=scenery_route_guide_page&needLocation=yes&src_from=scenery_function_bar&param=";
 
-    // for (var i = 0; i < bids.length; i++) {
-    //     arr.push(this.bid2Uid(bids[i]));
-    // }
+    for (var i = 0; i < bids.length; i++) {
+        arr.push(this.bid2Uid(bids[i]));
+    }
 
-    // q.allSettled(arr).then(function(result) {
-    //     result.forEach(function(uid) {
-    //         uids_arr.push(_.values(uid.value.data).pop());
-    //     })
-    //     return uids_arr;
-    // }).then(function(result0) {
-        uids.forEach(function(element1) {
+    q.allSettled(arr).then(function(result) {
+        result.forEach(function(uid) {
+            uids_arr.push(_.values(uid.value.data).pop());
+        })
+        return uids_arr;
+    }).then(function(result0) {
+        result0.forEach(function(element1) {
             routeguide_arr.push(me.routeguide(element1));
         })
 
@@ -306,10 +305,10 @@ util.writeRoute = function(uids, callback) {
 
                 callback(null, null);
             })
-    // })
+    })
 }
 
-util.writeAudio = function(uids, callback) {
+util.writeAudio = function(bids, callback) {
     //读取刚刚生成的result.js，only含有barinfo_fetter
     var Final = fs.readFileSync('./data/result.js', 'utf8');
     var finalItem = Final.split("\n");
@@ -326,18 +325,18 @@ util.writeAudio = function(uids, callback) {
         parms = '{"from":"scenery_function_bar","uid":"__uid__"}',
         daolan_url = "baidumap://map/component?comName=scenery&target=scenery_voice_guide_page&needLocation=yes&src_from=scenery_function_bar&param=";
 
-    // for (var i = 0; i < bids.length; i++) {
-    //     arr.push(this.bid2Uid(bids[i]));
-    // }
+    for (var i = 0; i < bids.length; i++) {
+        arr.push(this.bid2Uid(bids[i]));
+    }
 
-    // q.allSettled(arr).then(function(result) {
-    //     result.forEach(function(uid) {
-    //         uids_arr.push(_.values(uid.value.data).pop());
+    q.allSettled(arr).then(function(result) {
+        result.forEach(function(uid) {
+            uids_arr.push(_.values(uid.value.data).pop());
 
-    //     })
-    //     return uids_arr;
-    // }).then(function(result0) {
-        uids.forEach(function(element0) {
+        })
+        return uids_arr;
+    }).then(function(result0) {
+        result0.forEach(function(element0) {
             audioguide_arr.push(me.audioguide(element0));
         })
 
@@ -369,13 +368,13 @@ util.writeAudio = function(uids, callback) {
 
                 callback(null, null);
             })
-    // })
+    })
 
 }
 
 
 
-util.writeInter = function(uids, callback) {
+util.writeInter = function(bids, callback) {
     var Final = fs.readFileSync('./data/result.js', 'utf8');
     var finalItem = Final.split("\n");
 
@@ -392,19 +391,19 @@ util.writeInter = function(uids, callback) {
         parms = 'panotype=inter&from_source=share&pid=__PID__&panoid=__PID__&iid=__IID__',
         quanjing_url = "baidumap://map/component?target=street_scape_page&comName=streetscape&";
 
-    // for (var i = 0; i < bids.length; i++) {
-    //     arr.push(this.bid2Uid(bids[i]));
-    // }
+    for (var i = 0; i < bids.length; i++) {
+        arr.push(this.bid2Uid(bids[i]));
+    }
 
-    // q.allSettled(arr).then(function(result) {
-    //         result.forEach(function(uid) {
-    //             uids_arr.push(_.values(uid.value.data).pop());
+    q.allSettled(arr).then(function(result) {
+            result.forEach(function(uid) {
+                uids_arr.push(_.values(uid.value.data).pop());
 
-    //         });
-    //         return uids_arr;
-    //     })
-    //     .then(function(res2) {
-            uids.forEach(function(element2) {
+            });
+            return uids_arr;
+        })
+        .then(function(res2) {
+            res2.forEach(function(element2) {
                 hasinter_arr.push(me.hasinter(element2));
             })
             q.allSettled(hasinter_arr).then(function(result3) {
@@ -440,7 +439,7 @@ util.writeInter = function(uids, callback) {
 
                     callback(null, null);
                 })
-        // })
+        })
 
 }
 
@@ -562,12 +561,17 @@ util.hasinter = function(uid) {
 util.getBarInfoFree = function(results) {
     var barinfo_free = [];
     for (var i = 0; i < results.length; i++) {
-        results[i] = JSON.parse(results[i]);
-        barinfo_free.push("");
+        if(results[i]){
+            results[i] = JSON.parse(results[i]);
+            barinfo_free.push("");
 
-        for (var m = 0; m < results[i].barinfo_free.length; m++) {
-            barinfo_free[i] = barinfo_free[i] + results[i].barinfo_free[m].name + " ";
+            if(results[i].barinfo_free && results[i].barinfo_free.length){
+                 for (var m = 0; m < results[i].barinfo_free.length; m++) {
+                    barinfo_free[i] = barinfo_free[i] + results[i].barinfo_free[m].name + " ";
+                }
+            }
         }
+        
     }
     return barinfo_free;
 }
@@ -575,13 +579,15 @@ util.getBarInfoFree = function(results) {
 //返回result中每一条数据的“barinfo_fetter”字段的name信息
 util.getBarInfoFetter = function(results) {
     var barinfo_fetter = [];
-    for (var i = 0; i < results.length; i++) {
+    for (var i = 0; i < results.length && results[i]; i++) {
         //JSON.parse(results[i]);
-        barinfo_fetter.push("");
+        if(results[i]){
+            barinfo_fetter.push("");
 
-        if (results[i].barinfo_fetter.length) {
-            for (var m = 0; m < results[i].barinfo_fetter.length; m++) {
-                barinfo_fetter[i] = barinfo_fetter[i] + results[i].barinfo_fetter[m].name + " ";
+            if (results[i].barinfo_fetter && results[i].barinfo_fetter.length) {
+                for (var m = 0; m < results[i].barinfo_fetter.length; m++) {
+                    barinfo_fetter[i] = barinfo_fetter[i] + results[i].barinfo_fetter[m].name + " ";
+                }
             }
         }
     }
