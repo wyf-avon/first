@@ -68,7 +68,7 @@ util.getSuggestNameBid = function(suggest_name, rawData) {
 
 //读取对应关系TXT文本导出80个bid
 util.getTXTBids = function() {
-    var data = fs.readFileSync('./relation.txt', 'utf-8');
+    var data = fs.readFileSync('./data/relation.txt', 'utf-8');
     var datas = data.split("\n");
 
     var bids = [];
@@ -216,7 +216,7 @@ util.getBarinfo_free = function(bids, dataPath, sortPath) {
         Result += JSON.stringify(resultItem) + '\n';
     }
 
-    fs.writeFileSync('./result.js', Result);
+    fs.writeFileSync('./data/result.js', Result);
 
     return uid;
 }
@@ -248,7 +248,7 @@ util.sortType = function(arr) {
 
 util.writeRoute = function(uids, callback) {
     //读取刚刚生成的result.js，only含有barinfo_free，barinfo_fetter为空
-    var Final = fs.readFileSync('./result.js', 'utf8');
+    var Final = fs.readFileSync('./data/result.js', 'utf8');
     var finalItem = Final.split("\n");
 
     for (var i = 0; i < finalItem.length; i++) {
@@ -302,7 +302,7 @@ util.writeRoute = function(uids, callback) {
                 for (var i = 0; i < finalItem.length; i++) {
                     Result += JSON.stringify(finalItem[i]) + '\n';
                 }
-                fs.writeFileSync('./result.js', Result);
+                fs.writeFileSync('./data/result.js', Result);
 
                 callback(null, null);
             })
@@ -311,7 +311,7 @@ util.writeRoute = function(uids, callback) {
 
 util.writeAudio = function(uids, callback) {
     //读取刚刚生成的result.js，only含有barinfo_fetter
-    var Final = fs.readFileSync('./result.js', 'utf8');
+    var Final = fs.readFileSync('./data/result.js', 'utf8');
     var finalItem = Final.split("\n");
 
     for (var i = 0; i < finalItem.length; i++) {
@@ -365,7 +365,7 @@ util.writeAudio = function(uids, callback) {
                 for (var i = 0; i < finalItem.length; i++) {
                     Result += JSON.stringify(finalItem[i]) + '\n';
                 }
-                fs.writeFileSync('./result.js', Result);
+                fs.writeFileSync('./data/result.js', Result);
 
                 callback(null, null);
             })
@@ -376,7 +376,7 @@ util.writeAudio = function(uids, callback) {
 
 
 util.writeInter = function(uids, callback) {
-    var Final = fs.readFileSync('./result.js', 'utf8');
+    var Final = fs.readFileSync('./data/result.js', 'utf8');
     var finalItem = Final.split("\n");
 
     for (var i = 0; i < finalItem.length; i++) {
@@ -436,7 +436,7 @@ util.writeInter = function(uids, callback) {
                     for (var i = 0; i < finalItem.length; i++) {
                         Result += JSON.stringify(finalItem[i]) + '\n';
                     }
-                    fs.writeFileSync('./result.js', Result);
+                    fs.writeFileSync('./data/result.js', Result);
 
                     callback(null, null);
                 })
