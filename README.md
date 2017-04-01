@@ -1,13 +1,14 @@
 # scenic-bar
+`npm install scenic-bar`
 
-## util.js 为工具类，可在此类中继续添加功能函数
+* util.js 为工具类，可在此类中继续添加功能函数
 
-## 基于index2.js用法：
+### 基于index2.js用法：
    node index2.js
    注意原始文件格式，从左到右依次为：父点名称，父点id，子点类型
    如果原始数据过多，目前需要分批次调用线路语音和全景接口，看到"--结束--"字样，即生成成功
 
-## 基于目前的main.js的项目用法：
+### 基于目前的main.js的项目用法：
 
    执行node main.js，在console中看到"--结束--"字样，项目根目录下生成的result.js即为最终生成文件
 
